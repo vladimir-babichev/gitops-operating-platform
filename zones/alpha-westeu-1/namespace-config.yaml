@@ -1,0 +1,39 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: namespace-config-alpha-westeu-1
+  labels:
+    acm-app: namespace-config
+spec:
+  channel: fusion-operate-ch-helm/channel
+  name: k8s-namespace-template
+  packageFilter:
+    version: "0.1.0"
+  placement:
+    clusterSelector:
+      matchLabels:
+        zone: alpha-westeu-1
+  packageOverrides:
+  - packageName: k8s-namespace-template
+    packageAlias: namespace-config
+    packageOverrides:
+      - path: spec
+        value:
+          rbac:
+            edit:
+              enable: true
+              groupid: 5701bbc9-8dbf-4a3d-955f-53baf3159746
+            listNamespaces:
+              enable: true
+              groupDisplayName: SG_AZR-FO-FusionOperate-RnD
+              groupid: 5701bbc9-8dbf-4a3d-955f-53baf3159746
+            namespace: fusion-operate
+          resourceQuotas:
+            create: true
+            limits:
+              cpu: 10
+              mem: 32Gi
+            requests:
+              cpu: 7
+              mem: 24Gi

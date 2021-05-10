@@ -1,0 +1,34 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: external-dns-alpha-westeu-3
+  labels:
+    acm-app: external-dns
+spec:
+  channel: fusion-operate-ch-helm/channel
+  name: external-dns
+  packageFilter:
+    version: "0.3.0"
+  placement:
+    clusterSelector:
+      matchLabels:
+        zone: alpha-westeu-3
+  packageOverrides:
+  - packageName: external-dns
+    packageAlias: external-dns
+    packageOverrides:
+      - path: spec
+        value:
+          external-dns:
+            annotationFilter: kubernetes.io/ingress.class=kong-private,kubernetes.io/skip-dns-registration notin (true)
+            domainFilters:
+              - alpha.fusionfabric.io
+            txtOwnerId: p21d11105025003
+          externalSecret:
+            spec:
+              backendType: azureKeyVault
+              keyVaultName: p21d11105010003
+              data:
+                - key: ExternalDNS-AzureConfig
+                  name: azure.json

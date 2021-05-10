@@ -1,0 +1,11 @@
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: namespace-config
+  labels:
+    acm-app: namespace-config
+spec:
+  selector:
+    matchLabels:
+      acm-app: namespace-config

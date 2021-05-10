@@ -1,0 +1,43 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: chartmuseum-alpha-westeu-3
+  labels:
+    acm-app: chartmuseum
+spec:
+  channel: fusion-operate-ch-helm/channel
+  name: chartmuseum
+  packageFilter:
+    version: "0.3.0"
+  placement:
+    clusterSelector:
+      matchLabels:
+        zone: alpha-westeu-3
+  packageOverrides:
+  - packageName: chartmuseum
+    packageOverrides:
+      - path: spec
+        value:
+          chartmuseum:
+            ingress:
+              annotations:
+                kubernetes.io/ingress.class: kong-private
+              enabled: true
+              hosts:
+              - name: chartmuseum-westeurope-kong.alpha.fusionfabric.io
+                path: /
+                tls: true
+          externalSecret:
+            spec:
+              backendType: azureKeyVault
+              keyVaultName: p21d11105010003
+              data:
+                - key: ChartMuseum-AzureStorateAccessKey
+                  name: ChartMuseum-AzureStorateAccessKey
+                - key: ChartMuseum-AzureStorateAccount
+                  name: ChartMuseum-AzureStorateAccount
+                - key: ChartMuseum-BasicAuthPass
+                  name: ChartMuseum-BasicAuthPass
+                - key: ChartMuseum-BasicAuthUser
+                  name: ChartMuseum-BasicAuthUser

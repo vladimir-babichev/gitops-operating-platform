@@ -1,0 +1,11 @@
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: external-dns
+  labels:
+    acm-app: external-dns
+spec:
+  selector:
+    matchLabels:
+      acm-app: external-dns
