@@ -1,0 +1,38 @@
+{{ $global := . }}
+{{- range $k, $v := .Values.channels }}
+{{/* Channel definition */}}
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  namespace: {{ include "chart.name" $global }}-ch-{{ $k }}
+  name: channel
+  labels:
+    acm-app: {{ include "chart.name" $global }}-gitops
+spec:
+  {{- toYaml $v.spec | nindent 2 }}
+{{- if not $v.spec.secretRef }}
+{{- if $v.externalSecret }}
+  secretRef:
+    name: {{ include "chart.name" $global }}-gitops-secret
+{{- end }}
+{{- end }}
+
+{{- if $v.externalSecret }}
+{{/* ExternalSecret definition */}}
+---
+apiVersion: kubernetes-client.io/v1
+kind: ExternalSecret
+metadata:
+  namespace: {{ include "chart.name" $global }}-ch-{{ $k }}
+{{- if $v.externalSecret.name }}
+  name: {{ $v.externalSecret.name }}
+{{- else if $v.spec.secretRef }}
+  name: {{ $v.spec.secretRef.name }}
+{{- else }}
+  name: {{ include "chart.name" $global }}-gitops-secret
+{{- end }}
+spec:
+{{- toYaml $v.externalSecret | nindent 2 }}
+{{- end }}
+{{- end }}

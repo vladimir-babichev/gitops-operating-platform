@@ -1,0 +1,4 @@
+apiVersion: v2
+name: acm-tenant-gitops
+description: ACM Tenant GitOps re-usable chart
+version: 0.1.0

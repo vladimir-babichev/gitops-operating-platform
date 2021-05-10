@@ -1,0 +1,21 @@
+acm-tenant-gitops:
+  name: fusion-operate
+  annotations:
+    apps.open-cluster-management.io/git-branch: main
+  channels:
+    infra:
+      spec:
+        type: Git
+        pathname: https://github.com/finastra-engineering/gitops-operating-platform.git
+      externalSecret:
+        backendType: azureKeyVault
+        keyVaultName: p21d11105010003
+        data:
+          - key: ACM-GitHub-AccessToken
+            name: accessToken
+          - key: ACM-GitHub-User
+            name: user
+    helm:
+      spec:
+        type: HelmRepo
+        pathname: https://finastra-ghe.github.io/acm-poc-system-charts/

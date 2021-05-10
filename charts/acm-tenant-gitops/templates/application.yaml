@@ -1,0 +1,15 @@
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ include "chart.name" . }}-gitops
+  namespace: {{ include "chart.name" . }}
+  labels:
+    acm-app: {{ include "chart.name" . }}-gitops
+spec:
+  componentKinds:
+  - group: apps.open-cluster-management.io
+    kind: Subscription
+  selector:
+    matchLabels:
+      acm-app: {{ include "chart.name" . }}-gitops
