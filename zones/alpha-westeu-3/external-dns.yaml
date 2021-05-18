@@ -3,6 +3,7 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: Subscription
 metadata:
   name: external-dns-alpha-westeu-3
+  namespace: vbtest
   labels:
     acm-app: external-dns
 spec:
