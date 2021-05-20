@@ -87,6 +87,63 @@ oc label subscriptions.apps.open-cluster-management.io the_subscription_name rec
     multicluster-operators-standalone-subscription E0429 12:38:33.141490       1 git_subscriber_item.go:149] couldn't find remote ref "refs/heads/master"Subscription error.
     ```
 
-### App management
+### Subscription pod failures
 
-1. By default ACM doesn't manage application if it wasn't deployed by ACM
+```bash
+$ kubectl get pods
+...
+multicluster-operators-hub-subscription-9bf46886b-4kgrl          0/1     CreateContainerError   0          6d6h
+...
+
+$ kubectl describe pod
+...
+Warning  Failed   17m (x15774 over 3d23h)   kubelet  (combined from similar events): Error: error reserving ctr name k8s_multicluster-operators-hub-subscription_multicluster-operators-hub-subscription-9bf46886b-4kgrl_acm_6879d59a-9c35-481c-bad3-fa9dd262c693_1 for id a118fe4608910cb727795039e9f907292cddf8674668537a3c1d0db4c6c17a46: name is reserved
+...
+
+$ kubectl get pod <pod_name> -o yaml
+...
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2021-03-31T15:34:36Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2021-04-02T21:57:41Z"
+    message: 'containers with unready status: [multicluster-operators-hub-subscription]'
+    reason: ContainersNotReady
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2021-04-02T21:57:41Z"
+    message: 'containers with unready status: [multicluster-operators-hub-subscription]'
+    reason: ContainersNotReady
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2021-03-31T15:34:36Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://2416db1fc0af9f1e8ca5802e308cac3eba3746c5301d62774a9a8fd889bbcc62
+    image: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8@sha256:4323ee9b7d1deaa666c93f891cafb48518bf543fa671cb58777572775f813c64
+    imageID: registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel8@sha256:4323ee9b7d1deaa666c93f891cafb48518bf543fa671cb58777572775f813c64
+    lastState:
+      terminated:
+        containerID: cri-o://2416db1fc0af9f1e8ca5802e308cac3eba3746c5301d62774a9a8fd889bbcc62
+        exitCode: 137
+        finishedAt: "2021-04-02T21:57:40Z"
+        reason: OOMKilled
+        startedAt: "2021-03-31T15:34:40Z"
+    name: multicluster-operators-hub-subscription
+    ready: false
+    restartCount: 0
+    started: false
+    state:
+      waiting:
+        message: 'error reserving ctr name k8s_multicluster-operators-hub-subscription_multicluster-operators-hub-subscription-9bf46886b-4kgrl_acm_6879d59a-9c35-481c-bad3-fa9dd262c693_1
+          for id 55ffd716cc74425f806cefb1018a61b95fc5022e5fafd6f5a6a81bd6481f3d58:
+          name is reserved'
+        reason: CreateContainerError
+...
+```
