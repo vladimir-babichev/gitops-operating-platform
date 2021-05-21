@@ -37,7 +37,7 @@ def find_yaml_files(file_glob):
 def check_resource_kind(rd, fname):
     ok = True
     if rd['kind'] not in ALLOWED_KINDS:
-        print("{fname}: resource definition of kind '{rd.kind}' is forbidden")
+        print(f"{lchop(fname, ROOT_DIR)}: resource definition of kind '{rd.kind}' is forbidden")
         ok = False
     return ok
 
@@ -48,7 +48,7 @@ def check_target_namespace(rd, fname):
         return
     if rd['metadata']['namespace']:
         if not rd['metadata']['namespace'].startswith(ALLOWED_PREFIX):
-            print(f"{fname}: targets namespace '{rd['metadata']['namespace']}' is forbidden")
+            print(f"{lchop(fname, ROOT_DIR)}: targets namespace '{rd['metadata']['namespace']}' is forbidden")
             ok = False
     return ok
 
