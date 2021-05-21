@@ -1,6 +1,8 @@
-name: Python package
+name: Validate resource definitions
 
-on: [push]
+on: 
+  - push
+  - pull_request
 
 jobs:
   validate:
