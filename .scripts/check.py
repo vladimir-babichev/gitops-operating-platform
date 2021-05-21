@@ -71,7 +71,7 @@ def validate_resource(fname):
 def main():
     ok = True
     for fname in find_yaml_files(f"{ROOT_DIR}/**/*ml"):
-        validate_resource(fname)
+        ok = validate_resource(fname)
 
     if not ok:
         exit(1)
