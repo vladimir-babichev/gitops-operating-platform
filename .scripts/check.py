@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import glob
 import yaml
 from git import Repo
@@ -51,6 +52,7 @@ def check_target_namespace(rd, fname):
             ok = False
     return ok
 
+
 def validate_resource(fname):
     ok = True
     with open(fname, 'r') as stream:
@@ -59,15 +61,16 @@ def validate_resource(fname):
         except yaml.YAMLError as e:
             print(e)
             exit(1)
-
     if not check_resource_kind(rd, fname): ok = False
     if not check_target_namespace(rd, fname): ok = False
+    # if not check_project_labels(rd, fname): ok = False
 
     return ok
 
+
 def main():
     ok = True
-    for fname in find_yaml_files("../**/*ml"):
+    for fname in find_yaml_files(f"{ROOT_DIR}/**/*ml"):
         validate_resource(fname)
 
     if not ok:
@@ -75,6 +78,8 @@ def main():
 
 
 if __name__ == '__main__':
-    ALLOWED_PREFIX = get_namespace_prefix()
+    SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+    ROOT_DIR = os.path.abspath(SCRIPT_DIR + "/../")
+    ALLOWED_PREFIX = get_namespace_prefix(ROOT_DIR)
     ALLOWED_KINDS = set(['Subscription', 'Application'])
     main()
