@@ -44,26 +44,39 @@ def check_resource_kind(rd, fname):
 
 def check_target_namespace(rd, fname):
     ok = True
-    if 'namespace' not in rd['metadata']:
-        return
-    if rd['metadata']['namespace']:
-        if not rd['metadata']['namespace'].startswith(ALLOWED_PREFIX):
-            print(f"{lchop(fname, ROOT_DIR)}: targets namespace '{rd['metadata']['namespace']}' is forbidden")
-            ok = False
+    if 'namespace' not in rd['metadata']: return ok
+    if not rd['metadata']['namespace'].startswith(ALLOWED_PREFIX):
+        print(f"{lchop(fname, ROOT_DIR)}: targets namespace '{rd['metadata']['namespace']}' is forbidden")
+        ok = False
     return ok
+
+
+def check_project_label(rd, fname):
+    if 'labels' not in rd['metadata']:
+        print(f"{fname}: resource definition is missing label metadata")
+        return False
+    if 'project' not in rd['metadata']['labels']:
+        print(f"{fname}: resource definition is missing 'project' label")
+        return False
+    if rd['metadata']['labels']['project'] != ALLOWED_PREFIX:
+        print(f"{fname}: resource project label '{rd['metadata']['labels']['project']}' is forbidden")
+        return False
+    return True
 
 
 def validate_resource(fname):
     ok = True
     with open(fname, 'r') as stream:
         try:
-            rd = yaml.safe_load(stream)
+            rdefinition = yaml.safe_load(stream)
         except yaml.YAMLError as e:
             print(e)
             exit(1)
-    if not check_resource_kind(rd, fname): ok = False
-    if not check_target_namespace(rd, fname): ok = False
-    # if not check_project_labels(rd, fname): ok = False
+    rlocation = lchop(fname, ROOT_DIR)
+
+    if not check_resource_kind(rdefinition, rlocation): ok = False
+    if not check_target_namespace(rdefinition, rlocation): ok = False
+    if not check_project_label(rdefinition, rlocation): ok = False
 
     return ok
 
@@ -72,7 +85,6 @@ def main():
     ok = True
     for fname in find_yaml_files(f"{ROOT_DIR}/**/*ml"):
         ok = validate_resource(fname)
-
     if not ok:
         exit(1)
 
