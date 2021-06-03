@@ -11,9 +11,8 @@ spec:
   packageFilter:
     version: "0.1.0"
   placement:
-    clusterSelector:
-      matchLabels:
-        zone: dev-westeu-1
+    placementRef:
+      name: dev-westeu-1
   packageOverrides:
   - packageName: k8s-namespace-template
     packageAlias: namespace-config
